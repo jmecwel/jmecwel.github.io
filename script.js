@@ -24,7 +24,7 @@ d3.json("data.json").then(function(data) {
   var {nodes, links} = sankey(data);
   
   // add links to svg
-  svg.append("g")
+  var link = svg.append("g")
       .selectAll(".link")
       .data(links)
       .enter()
@@ -34,15 +34,6 @@ d3.json("data.json").then(function(data) {
       .style("stroke-width", function(d) { return Math.max(1, d.width); })
       .style("stroke", function(d) { return linkColor(d.source.name); })
       .sort(function(a, b) { return b.width - a.width; });
-  
-    // add in the links
-    var link = svg.append("g").selectAll(".link")
-        .data(graph.links)
-        .enter().append("path")
-        .attr("class", "link")
-        .attr("d", path)
-        .style("stroke-width", function(d) { return Math.max(1, d.width); })
-        .sort(function(a, b) { return b.width - a.width; });
     
   // add nodes to svg
   var node = svg.append("g")
