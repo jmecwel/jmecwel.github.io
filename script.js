@@ -35,6 +35,15 @@ d3.json("data.json").then(function(data) {
       .style("stroke", function(d) { return linkColor(d.source.name); })
       .sort(function(a, b) { return b.width - a.width; });
   
+    // add in the links
+    var link = svg.append("g").selectAll(".link")
+        .data(graph.links)
+        .enter().append("path")
+        .attr("class", "link")
+        .attr("d", path)
+        .style("stroke-width", function(d) { return Math.max(1, d.width); })
+        .sort(function(a, b) { return b.width - a.width; });
+    
   // add nodes to svg
   var node = svg.append("g")
       .selectAll(".node")
@@ -66,13 +75,17 @@ d3.json("data.json").then(function(data) {
       .attr("x", 6 + sankey.nodeWidth())
       .attr("text-anchor", "start");
   
-  // dragmove function for dragging nodes
-  function dragmove(d) {
+   // the function for moving the nodes
+   function dragmove(d) {
     d3.select(this)
-        .attr("transform", "translate(" + d.x0 + "," + (d.y0 = d3.event.y) + ")");
-    sankey.update(data);
-    svg.selectAll(".link")
-        .attr("d", d3.sankeyLinkHorizontal());
+      .attr("transform",
+            "translate("
+               + d.x + ","
+               + (d.y = Math.max(
+                  0, Math.min(height - d.dy, d3.event.y))
+                 ) + ")");
+    sankey.relayout();
+    link.attr("d", path);
   }
   
 }).catch(function(error) {
