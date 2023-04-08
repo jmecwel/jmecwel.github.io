@@ -25,7 +25,12 @@ d3.json("data.json").then(function(data) {
 
   // Add curves to links
   var path = d3.sankeyLinkHorizontal()
-    .curvature(0.5);
+    .source(function(d) { return [d.source.x + d.source.dx, d.source.y + d.sy + d.dy / 2]; })
+    .target(function(d) { return [d.target.x, d.target.y + d.ty + d.dy / 2]; })
+    .x(function(d) { return d[0]; })
+    .y(function(d) { return d[1]; })
+    .curve(d3.curveBasis);
+
   
   // add links to svg
   var link = svg.append("g")
